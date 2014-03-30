@@ -1,0 +1,8 @@
+;mellow config v1
+;GNU GPL v2
+use_tree = 1
+default_mcu = atmega8
+default_fcpu = 16000000Mhz
+default_prog = stk500v2
+default_compile = avr-gcc
+

@@ -1,0 +1,146 @@
+#! /usr/bin/python
+
+from PyQt4 import QtCore, QtGui
+import sys
+from PyQt4 import  uic
+import os
+from PyQt4.Qt import *
+import stylehighliter
+
+class MainWindow(QtGui.QMainWindow):
+	def __init__(self):
+		QMainWindow.__init__(self)
+		uic.loadUi('mainwindow.ui', self)
+		self.rootpath = "/home" #ROOT PATH
+		self.filepath  = ""
+		self.flag_editor = 1
+		#INIT CONNECT
+		self.action_New.activated.connect(self.file_new_func)
+		self.action_Open.activated.connect(self.file_open_func)
+		self.action_Save.activated.connect(self.file_save_func)
+		self.action_Save_As.activated.connect(self.file_saveas_func)
+		self.action_Print_Review.activated.connect(self.file_preview_func)
+		self.action_Print.activated.connect(self.file_print_func)
+		self.action_Quit.activated.connect(self.file_quit_func)
+		self.action_Compile.activated.connect(self.build_compile_func)
+		self.action_Make.activated.connect(self.build_make_func)
+		
+		self.tabWidget.tabCloseRequested.connect(self.tabWidget.removeTab)
+		#INIT ALL
+		self.highlighter = Highlighter(self.textEdit.document())
+		self.textEdit.setTabStopWidth(15) #tab
+		self.tabWidget.setTabsClosable(True)
+				
+	def removeTab(self,index):
+		self.removeTab(index)	
+						  
+	def getCurrentWidget(self):
+		return self.tabWidget.currentWidget()
+
+	def file_new_func(self):
+		self.tabWidget.addTab(QtGui.QTextEdit(''), 'No name')
+		
+	def file_open_func(self):
+		try:		
+			fname = QFileDialog.getOpenFileName(self, 'Open file',self.rootpath)	
+			f = open(fname, 'r')
+			self.filepath = f
+			self.indexfortab = self.tabWidget.count() - self.tabWidget.currentIndex()
+			print self.indexfortab
+			
+			if(self.tabWidget.count() == 1):   
+				if(self.flag_editor == 1):
+					with f:        
+						data = f.read()
+						self.textEdit.setText(data)
+					self.flag_editor = 0
+				else:
+					self.tabWidget.addTab(QtGui.QTextEdit(''), 'No name')
+					self.editor = self.tabWidget.widget(self.tabWidget.currentIndex()+self.indexfortab)
+					with f:        
+						data = f.read()
+						self.editor.setText(data)
+							
+			elif(self.tabWidget.count() == 0):
+				self.tabWidget.addTab(QtGui.QTextEdit(''), 'No name')
+				self.editor = self.tabWidget.widget(0)
+				
+				with f:        
+					data = f.read()
+					self.editor.setText(data)					
+				self.flag_editor = 0
+			
+			elif(self.tabWidget.count() > 1):
+				self.tabWidget.addTab(QtGui.QTextEdit(''), 'No name')
+				self.editor = self.tabWidget.widget(self.tabWidget.currentIndex() + self.indexfortab)
+				print self.tabWidget.currentIndex() + self.indexfortab
+				with f:        
+					data = f.read()
+					self.editor.setText(data)					
+	
+			self.statusbar.showMessage("file opened : "+ fname)
+
+		except IOError as (errno, strerror):
+			self.statusbar.showMessage(strerror)			
+		except:
+			pass
+			
+	def closeEvent(self,event):
+		result = self.save_request()
+		if result:
+			event.accept()
+		else:
+			event.ignore()
+
+	def file_save_func(self):
+		if self.filepath == "":
+			fname = QFileDialog.getSaveFileName(self, 'Save file',self.rootpath)		
+			self.filepath = fname   
+			
+		self.editor = self.tabWidget.widget(self.tabWidget.currentIndex())
+		content  =  self.editor.toPlainText()
+		filepath = self.filepath
+		
+		self.save_my_file(filepath,content)
+		
+	def file_saveas_func(self):
+		fname = QFileDialog.getSaveFileName(self, 'Save file',self.rootpath)		
+		self.filepath = fname   		
+		self.editor = self.tabWidget.widget(self.tabWidget.currentIndex())
+		content  =  self.editor.toPlainText()
+		filepath = self.filepath
+		
+		self.save_my_file(filepath,content)
+	def save_my_file(self,filepath,content):
+		try:	
+			f = open(filepath,"a+")
+			f.write(content)
+			f.close()
+			self.statusbar.showMessage("file saved : "+filepath)			
+			self.last_saved = content
+			
+		except IOError as (errno, strerror):
+			self.statusbar.showMessage(strerror)			
+		except:
+			pass
+
+	def file_preview_func(self):
+	        dialog = QPrintPreviewDialog()
+       		self.editor = self.tabWidget.widget(self.tabWidget.currentIndex())
+	        dialog.paintRequested.connect(self.editor.print_)
+	        dialog.exec_()
+	def file_print_func(self):
+		return 0
+	def file_quit_func(self):
+		return 0
+	def build_compile_func(self):
+		return 0
+	def build_make_func(self):
+		return 0
+		
+	
+app = QApplication(sys.argv)
+main = MainWindow()
+main.show()
+sys.exit(app.exec_())
+	
