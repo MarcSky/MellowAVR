@@ -1,5 +1,4 @@
-;mellow config v1
-;GNU GPL v2
+[general]
 use_tree = 1
 default_mcu = atmega8
 default_fcpu = 16000000Mhz

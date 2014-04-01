@@ -29,7 +29,9 @@ class MainWindow(QtGui.QMainWindow):
 		self.action_Quit.activated.connect(self.file_quit_func)
 		self.action_Compile.activated.connect(self.build_compile_func)
 		self.action_Make.activated.connect(self.build_make_func)
-		
+		self.actionGCC_version.activated.connect(self.gcc_version_func)
+		self.actionClean.activated.connect(self.build_clean_func)
+		self.actionDisassembler.activated.connect(self.build_disasm_func)
 		self.tabWidget.setTabsClosable(True)
 		self.connect(self.tabWidget, QtCore.SIGNAL('tabCloseRequested(int)'), self.removeTab)
 		self.rootpath = QtCore.QDir.rootPath() + "home" # /Linux
@@ -71,9 +73,13 @@ class MainWindow(QtGui.QMainWindow):
 		self.path_list.append('Empty')
 		self.listWidget.addItem("Open empty file")
 		
-	def file_open_func(self):
-		try:		
-			fname = QFileDialog.getOpenFileName(self, 'Open file', self.rootpath, "C/C++ (*.c);; All (*.*);; Makefile (makefile)")	
+	def file_open_func(self, path = 0):
+		try:
+			fname = 0;
+			if not path:		
+				fname = QFileDialog.getOpenFileName(self, 'Open file', self.rootpath, "C/C++ (*.c);; All (*.*);; Makefile (makefile)")	
+			else:
+				fname = path
 			f = open(fname, 'r')
 			self.filepath = fname
 			self.path_list.append(self.filepath)
@@ -157,9 +163,13 @@ class MainWindow(QtGui.QMainWindow):
 		path = self.path_list[self.tabWidget.currentIndex()]
 		infopath = QFileInfo(path)
 		filePath = str(infopath.path()) + '/'
-		output = compiler.build_project(filePath)
+		output, check = compiler.build_project(filePath)
 		outputdecode = unicode(output, 'UTF-8')
 		self.textEdit.setText(outputdecode)
+		if check:
+			self.listWidget.addItem("succes compile")
+		else:
+			self.listWidget.addItem("not success compile, check your makefile")
  
 	def open_file(self, file_path):
 		try:
@@ -191,6 +201,39 @@ class MainWindow(QtGui.QMainWindow):
 			f.close()
  
 	def build_make_func(self):
+		return 0
+	
+	def build_clean_func(self):
+		if (len(self.path_list) == 0):
+			return
+		path = self.path_list[self.tabWidget.currentIndex()]
+		infopath = QFileInfo(path)
+		filePath = str(infopath.path()) + '/'
+		output, check = compiler.build_clean(filePath)
+		outputdecode = unicode(output, 'UTF-8')
+		self.textEdit.setText(outputdecode)
+		if not check:
+			self.listWidget.addItem("succes clean")
+		else:
+			self.listWidget.addItem("file *.hex exist")
+
+	def build_disasm_func(self):
+		if (len(self.path_list) == 0):
+			return
+		path = self.path_list[self.tabWidget.currentIndex()]
+		infopath = QFileInfo(path)
+		filePath = str(infopath.path()) + '/'
+		output, check = compiler.build_disasm(filePath)
+		outputdecode = unicode(output, 'UTF-8')
+		self.textEdit.setText(outputdecode)
+		if check:
+			self.file_open_func(filePath + 'main.asm')
+			self.listWidget.addItem("succes clean")
+		else:
+			self.listWidget.addItem("file *.hex exist")
+
+	def gcc_version_func(self):
+		self.listWidget.addItem(compiler.build_version_gcc())
 		return 0
 		
 	

@@ -154,11 +154,14 @@
     </property>
     <addaction name="action_Compile"/>
     <addaction name="action_Make"/>
+    <addaction name="actionClean"/>
+    <addaction name="actionDisassembler"/>
    </widget>
    <widget class="QMenu" name="menu_Settings">
     <property name="title">
      <string>&amp;Settings</string>
     </property>
+    <addaction name="actionGCC_version"/>
    </widget>
    <widget class="QMenu" name="menu_About">
     <property name="title">
@@ -324,6 +327,24 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionGCC_version">
+   <property name="text">
+    <string>&amp;avr-gcc version</string>
+   </property>
+   <property name="toolTip">
+    <string>avr-gcc version</string>
+   </property>
+  </action>
+  <action name="actionClean">
+   <property name="text">
+    <string>Clean</string>
+   </property>
+  </action>
+  <action name="actionDisassembler">
+   <property name="text">
+    <string>Disassembler</string>
    </property>
   </action>
  </widget>
