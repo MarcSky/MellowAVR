@@ -18,7 +18,7 @@ class np_Dialog(QtGui.QDialog, Ui_Dialog):
         self.connect(self.find, SIGNAL("clicked()"), self.findPathHandler)
         self.connect(self.ok, SIGNAL("clicked()"), self.okHandler)
         self.connect(self.cancel, SIGNAL("clicked()"), self.exitHandler)
- 
+
     def okHandler(self):
 		if self.nameEdit.text() and self.pathEdit.text():
 			self.nameProject = self.nameEdit.text()
@@ -29,20 +29,22 @@ class np_Dialog(QtGui.QDialog, Ui_Dialog):
 			directory.mkdir("src")
 			directory.mkdir("header")
 			self.mainpath = self.fullpath + '/main.c'
-			#print self.fullpath
 			main = open(self.mainpath, "a+")
 			main.close()
 			#comm_string = "cd .. && cd files && cp makefile "  + self.fullpath + '/'
 			#print comm_string
 			#comm_string = "uname -a"
 			#Popen(comm_string, executable='/bin/bash', shell=True).communicate()
-			makefile = open("../files/makefile", "r")
+			makefile = open("../files/make_file", "r")
 			data = makefile.read()
 			makefile.close()
 			print data
 			makefile = open(self.fullpath + '/makefile', "w+")
 			makefile.write(data)
 			makefile.close()
+			config = open(self.fullpath + '/mellow.mcf', "w+")
+			config.write(self.create_config())
+			config.close()
 			self.close()
 		else:
 			self.close()
@@ -55,9 +57,14 @@ class np_Dialog(QtGui.QDialog, Ui_Dialog):
     def getInfo(self):
 		return self.fullpath, self.mainpath
 
+    def create_config(self):
+		content = "[config]\n" + "project_name=" + self.nameProject + "\n" + "default_mcu=atmega8\n"
+		#s="[config]\nproject_name=%s\nhello\n" % (self.nameProject)
+		return content		
+
     def exitHandler(self):
-		self.close()
-	
+		self.close()		
+
 #app = QApplication(sys.argv)
 #main = np_Dialog()
 #main.show()

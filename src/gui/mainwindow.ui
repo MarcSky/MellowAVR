@@ -11,15 +11,15 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>MellowAVR</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>200</x>
       <y>10</y>
-      <width>991</width>
+      <width>811</width>
       <height>341</height>
      </rect>
     </property>
@@ -30,9 +30,9 @@
    <widget class="QTabWidget" name="tabInfo">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>200</x>
       <y>360</y>
-      <width>991</width>
+      <width>811</width>
       <height>191</height>
      </rect>
     </property>
@@ -107,6 +107,16 @@
       </property>
      </widget>
     </widget>
+   </widget>
+   <widget class="QTreeView" name="treeView">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>181</width>
+      <height>541</height>
+     </rect>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -200,7 +210,7 @@
   <action name="action_New">
    <property name="icon">
     <iconset>
-     <normaloff>../icons/add.png</normaloff>../icons/add.png</iconset>
+     <normaloff>icons/add.png</normaloff>icons/add.png</iconset>
    </property>
    <property name="text">
     <string>&amp;New</string>
@@ -212,7 +222,7 @@
   <action name="action_Open">
    <property name="icon">
     <iconset>
-     <normaloff>../icons/folder.png</normaloff>../icons/folder.png</iconset>
+     <normaloff>icons/folder.png</normaloff>icons/folder.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Open Project</string>
@@ -224,7 +234,7 @@
   <action name="action_Save">
    <property name="icon">
     <iconset>
-     <normaloff>../icons/disk.png</normaloff>../icons/disk.png</iconset>
+     <normaloff>icons/disk.png</normaloff>icons/disk.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Save</string>
@@ -259,7 +269,7 @@
   <action name="action_Copy">
    <property name="icon">
     <iconset>
-     <normaloff>../icons/copy.png</normaloff>../icons/copy.png</iconset>
+     <normaloff>icons/copy.png</normaloff>icons/copy.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Copy</string>
@@ -268,7 +278,7 @@
   <action name="action_Cut">
    <property name="icon">
     <iconset>
-     <normaloff>../icons/cut.png</normaloff>../icons/cut.png</iconset>
+     <normaloff>icons/cut.png</normaloff>icons/cut.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Cut</string>
@@ -277,7 +287,7 @@
   <action name="action_Paste">
    <property name="icon">
     <iconset>
-     <normaloff>../icons/edit-paste.png</normaloff>../icons/edit-paste.png</iconset>
+     <normaloff>icons/edit-paste.png</normaloff>icons/edit-paste.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Paste</string>
@@ -286,7 +296,7 @@
   <action name="action_Redo">
    <property name="icon">
     <iconset>
-     <normaloff>../icons/redo.png</normaloff>../icons/redo.png</iconset>
+     <normaloff>icons/redo.png</normaloff>icons/redo.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Redo</string>
@@ -295,7 +305,7 @@
   <action name="action_Undo">
    <property name="icon">
     <iconset>
-     <normaloff>../icons/undo.png</normaloff>../icons/undo.png</iconset>
+     <normaloff>icons/undo.png</normaloff>icons/undo.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Undo</string>

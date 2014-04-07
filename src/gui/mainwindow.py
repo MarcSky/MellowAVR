@@ -1,32 +1,36 @@
-#! /usr/bin/pythonx
-
-from PyQt4.Qt import *
+#from PyQt4.Qt import *
 from PyQt4 import QtGui, QtCore
-from PyQt4 import  uic
-import subprocess
+from mainwind import Ui_MainWindow
 import sys
 import os
+import os.path
 sys.path.insert(0, '../library')
 import compiler
+import parser_config
 from stylehighliter import *
 from np_dialog import *
+from parser_config import *
 
-class MainWindow(QtGui.QMainWindow):
+class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 	def __init__(self):
 		QMainWindow.__init__(self)
-		uic.loadUi('mainwindow.ui', self)
+		self.setupUi(self)
 		self.path_list = []
 		self.filepath  = ""
 		self.flag_tab = 0
 		self.resize(1024, 650)
+		self.parser = parser_config()
+		#self.parser.set_path('/home/juster/test')
+		#print self.parser.get_param('project_name')
+		self.model = QtGui.QFileSystemModel(self)
+		self.treeView.doubleClicked.connect(self.on_treeView_clicked)
+		
 		self.action_New.activated.connect(self.file_new_func)
 		self.action_New_Project.activated.connect(self.file_new_project_func)
 		self.action_Open.activated.connect(self.file_open_func)
 		self.action_Save.activated.connect(self.file_save_func)
 		self.action_Save_As.activated.connect(self.file_saveas_func)
-		self.action_Print_Review.activated.connect(self.file_preview_func)
-		self.action_Print.activated.connect(self.file_print_func)
-		self.action_Quit.activated.connect(self.file_quit_func)
+		self.action_Quit.activated.connect(self.closeEvent)
 		self.action_Compile.activated.connect(self.build_compile_func)
 		self.action_Make.activated.connect(self.build_make_func)
 		self.actionGCC_version.activated.connect(self.gcc_version_func)
@@ -34,9 +38,9 @@ class MainWindow(QtGui.QMainWindow):
 		self.actionDisassembler.activated.connect(self.build_disasm_func)
 		self.tabWidget.setTabsClosable(True)
 		self.connect(self.tabWidget, QtCore.SIGNAL('tabCloseRequested(int)'), self.removeTab)
-		self.rootpath = QtCore.QDir.rootPath() + "home" # /Linux
+		self.rootpath = QtCore.QDir.rootPath() + "home/juster/" # /Linux
 		self.window = None
-        
+
 	def removeTab(self,index):
 		self.tabWidget.removeTab(index)
 		self.listWidget.addItem("Close file: " + self.path_list[index])
@@ -72,20 +76,36 @@ class MainWindow(QtGui.QMainWindow):
 		self.highlighter = Highlighter(self.editor.document())
 		self.path_list.append('Empty')
 		self.listWidget.addItem("Open empty file")
+	
+	#check path for file.
+	def check_path(self, path):
+		flag = 1 #not found
+		for x in range(len(self.path_list)):
+			if(self.path_list[x] == path):
+				flag = 0 #found
+				break
+		return flag		
 		
 	def file_open_func(self, path = 0):
 		try:
-			fname = 0;
+			self.filepath = 0;
 			if not path:		
-				fname = QFileDialog.getOpenFileName(self, 'Open file', self.rootpath, "C/C++ (*.c);; All (*.*);; Makefile (makefile)")	
+				self.filepath = QFileDialog.getOpenFileName(self, 'Open file', self.rootpath, "C/C++ (*.c);; All (*.*);; Makefile (makefile)")	
 			else:
-				fname = path
-			f = open(fname, 'r')
-			self.filepath = fname
+				self.filepath = path
+			
+			if not self.check_path(self.filepath):
+				self.listWidget.addItem("This file is open: " + self.filepath)
+				return
+						
+			f = open(self.filepath, 'a+')
 			self.path_list.append(self.filepath)
-			fileInfo = QtCore.QFileInfo(fname)
+			fileInfo = QtCore.QFileInfo(self.filepath)
 			fileName = fileInfo.baseName()
 			
+			absolutePath = fileInfo.path()
+			path_config = self.find_config(self.filepath)
+
 			self.indexfortab = self.tabWidget.count() - self.tabWidget.currentIndex()				
 			self.tabWidget.addTab(QtGui.QTextEdit(''), fileName)
 			
@@ -95,20 +115,39 @@ class MainWindow(QtGui.QMainWindow):
 			else:
 				self.editor = self.tabWidget.widget(self.tabWidget.currentIndex() + self.indexfortab)
 
-			self.editor.setTabStopWidth(15) #tab
+			self.editor.setTabStopWidth(15)
 			self.highlighter = Highlighter(self.editor.document())
 
 			with f:        
 				data = f.read()
-				self.editor.setText(data)					
+				self.editor.setText(data)
+				f.close() #new					
+						
+			if path_config and path_config == absolutePath:
+				self.model.setRootPath(absolutePath)
+				self.indexRoot = self.model.index(self.model.rootPath())
+				self.treeView.setModel(self.model)
+				self.treeView.setRootIndex(self.indexRoot)
 			
-			self.listWidget.addItem("Open file: " + fname)			
-
+			self.listWidget.addItem("Open file: " + self.filepath)
+			
 		except IOError as (errno, strerror):
 			self.listWidget.addItem("Error: " + strerror)			
 		except:
 			pass
-			
+		
+	def find_config(self, path):
+		dic = list(str(path).split('/'))
+		size = len(dic)
+		count = 1
+		while (size - count > 1):
+			new_path = '/'.join(dic[1:size - count])
+			count = count + 1
+			a = '/' + new_path
+			if os.path.isfile(a + '/mellow.mcf'):
+				return a
+		return 0
+		
 	def file_save_func(self):
 		try:
 			if self.path_list[self.tabWidget.currentIndex()] == 'Empty':
@@ -149,17 +188,20 @@ class MainWindow(QtGui.QMainWindow):
 		except IOError as (errno, strerror):
 			self.listWidget.addItem("Error: " + strerror)			
 		except:
-			pass
-
-	def file_preview_func(self):
-		return 0	        
-	def file_print_func(self):
-		return 0
-	def file_quit_func(self):
-		return 0
+			pass			        
+		
+	def closeEvent(self, event):
+		ask = QtGui.QMessageBox.question(self, 'Exit', 'Are you sure to quit?', QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+		if ask == QtGui.QMessageBox.Yes:
+			event.accept()
+		else:
+			event.ignore()
+			
 	def build_compile_func(self):
 		if (len(self.path_list) == 0):
+			self.listWidget.addItem("Project not opened")
 			return
+
 		path = self.path_list[self.tabWidget.currentIndex()]
 		infopath = QFileInfo(path)
 		filePath = str(infopath.path()) + '/'
@@ -227,7 +269,7 @@ class MainWindow(QtGui.QMainWindow):
 		outputdecode = unicode(output, 'UTF-8')
 		self.textEdit.setText(outputdecode)
 		if check:
-			self.file_open_func(filePath + 'main.asm')
+			self.file_open_func(filePath + 'bin/main.asm')
 			self.listWidget.addItem("succes clean")
 		else:
 			self.listWidget.addItem("file *.hex exist")
@@ -236,8 +278,14 @@ class MainWindow(QtGui.QMainWindow):
 		self.listWidget.addItem(compiler.build_version_gcc())
 		return 0
 		
+	def on_treeView_clicked(self, index):
+		indexItem = self.model.index(index.row(), 0, index.parent())
+		fileName = self.model.fileName(indexItem)
+		filePath = self.model.filePath(indexItem)
+		self.file_open_func(filePath)
+
 	
-app = QApplication(sys.argv)
-main = MainWindow()
-main.show()
-sys.exit(app.exec_())
+#app = QApplication(sys.argv)
+#main = MainWindow()
+#main.show()
+#sys.exit(app.exec_())

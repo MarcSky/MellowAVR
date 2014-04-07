@@ -1,7 +1,5 @@
-import os
-import sys
-sys.path.insert(0, 'gui')
-from mainwindow import *
+from gui.mainwindow import *
+
 
 app = QApplication(sys.argv)
 main = MainWindow()
