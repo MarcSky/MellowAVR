@@ -1,14 +1,12 @@
-TARG = main
+TARG =main #varibale
 OUTDIR = bin
 CC = avr-gcc
 OBJCOPY = avr-objcopy
-SRCS = main.c
+SRCS = main.c  #list varible
 OBJS = $(SRCS:.c=.o)
-MCU = atmega8
-F_CPU = 16000000
-
-CFLAGS = -mmcu=$(MCU) -Wall -g -Os -Werror -lm  -mcall-prologues -DF_CPU=$(F_CPU) -Iheader
-LDFLAGS = -mmcu=$(MCU)  -Wall -g -Os  -Werror
+MCU=atmega8 #varible
+CFLAGS = -mmcu=$(MCU) -Wall -g -Os -Werror -lm  -mcall-prologues -DF_CPU=11059200 -Iheader #varible
+LDFLAGS = -mmcu=$(MCU)  -Wall -g -Os  -Werror  #varible
 
 all: dir $(TARG) 
 

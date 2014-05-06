@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Mon Apr  7 20:04:59 2014
+# Created: Fri May  2 09:38:20 2014
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -140,6 +140,14 @@ class Ui_MainWindow(object):
         self.actionClean.setObjectName(_fromUtf8("actionClean"))
         self.actionDisassembler = QtGui.QAction(MainWindow)
         self.actionDisassembler.setObjectName(_fromUtf8("actionDisassembler"))
+        self.actionAvrdude_version = QtGui.QAction(MainWindow)
+        self.actionAvrdude_version.setObjectName(_fromUtf8("actionAvrdude_version"))
+        self.actionProgrammator = QtGui.QAction(MainWindow)
+        self.actionProgrammator.setObjectName(_fromUtf8("actionProgrammator"))
+        self.actionSettings = QtGui.QAction(MainWindow)
+        self.actionSettings.setObjectName(_fromUtf8("actionSettings"))
+        self.actionInfo = QtGui.QAction(MainWindow)
+        self.actionInfo.setObjectName(_fromUtf8("actionInfo"))
         self.menu_File.addAction(self.action_New_Project)
         self.menu_File.addAction(self.action_Open)
         self.menu_File.addAction(self.action_Save)
@@ -160,6 +168,10 @@ class Ui_MainWindow(object):
         self.menu_Build.addAction(self.actionClean)
         self.menu_Build.addAction(self.actionDisassembler)
         self.menu_Settings.addAction(self.actionGCC_version)
+        self.menu_Settings.addAction(self.actionAvrdude_version)
+        self.menu_Settings.addAction(self.actionProgrammator)
+        self.menu_Settings.addAction(self.actionSettings)
+        self.menu_About.addAction(self.actionInfo)
         self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menu_Edit.menuAction())
         self.menubar.addAction(self.menu_Find.menuAction())
@@ -221,4 +233,8 @@ class Ui_MainWindow(object):
         self.actionGCC_version.setToolTip(QtGui.QApplication.translate("MainWindow", "avr-gcc version", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClean.setText(QtGui.QApplication.translate("MainWindow", "Clean", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDisassembler.setText(QtGui.QApplication.translate("MainWindow", "Disassembler", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAvrdude_version.setText(QtGui.QApplication.translate("MainWindow", "avrdude version", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionProgrammator.setText(QtGui.QApplication.translate("MainWindow", "Programmator", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSettings.setText(QtGui.QApplication.translate("MainWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionInfo.setText(QtGui.QApplication.translate("MainWindow", "Info", None, QtGui.QApplication.UnicodeUTF8))
 

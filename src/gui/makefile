@@ -7,7 +7,7 @@ OBJS = $(SRCS:.c=.o)
 MCU = atmega8
 F_CPU = 16000000
 
-CFLAGS = -mmcu=$(MCU) -Wall -g -Os -Werror -lm  -mcall-prologues -DF_CPU=$(F_CPU) -Iheader
+CFLAGS = -mmcu=$(MCU) -Wall -g -Os -Werror -lm  -mcall-prologues -DF_CPU=  -Wall -Werror -Os
 LDFLAGS = -mmcu=$(MCU)  -Wall -g -Os  -Werror
 
 all: dir $(TARG) 

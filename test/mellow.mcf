@@ -1,0 +1,3 @@
+[config]
+project_name=test
+default_mcu=atmega8

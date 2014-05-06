@@ -8,7 +8,7 @@ class parser_config():
 	
 	def set_path(self,path):
 		self.filepath = path
-		self.parser.read(self.filepath + '/mellow.cnf')
+		self.parser.read(self.filepath + '/mellow.mcf')
 	
 	def get_path(self):
 		return self.filepath

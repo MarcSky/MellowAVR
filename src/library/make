@@ -1,4 +1,4 @@
-TARG = main
+TARG =main
 OUTDIR = bin
 CC = avr-gcc
 OBJCOPY = avr-objcopy

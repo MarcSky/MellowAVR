@@ -172,11 +172,14 @@
      <string>&amp;Settings</string>
     </property>
     <addaction name="actionGCC_version"/>
+    <addaction name="actionAvrdude_version"/>
+    <addaction name="actionSettings"/>
    </widget>
    <widget class="QMenu" name="menu_About">
     <property name="title">
      <string>&amp;About</string>
     </property>
+    <addaction name="actionInfo"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -355,6 +358,26 @@
   <action name="actionDisassembler">
    <property name="text">
     <string>Disassembler</string>
+   </property>
+  </action>
+  <action name="actionAvrdude_version">
+   <property name="text">
+    <string>avrdude version</string>
+   </property>
+  </action>
+  <action name="actionProgrammator">
+   <property name="text">
+    <string>Programmator</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionInfo">
+   <property name="text">
+    <string>Info</string>
    </property>
   </action>
  </widget>

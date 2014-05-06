@@ -22,6 +22,11 @@ def build_version_gcc():
 	output, err = p.communicate()
 	return output
 
+def build_version_avrdude():
+	p = subprocess.Popen("avrdude -v", stdout=subprocess.PIPE, shell=True)
+	output, err = p.communicate()
+	return output
+
 def build_disasm(path):
 	p = subprocess.Popen("cd ~ && cd " +path+ " && avr-objdump -dS bin/main.elf > bin/main.asm", stdout=subprocess.PIPE, shell=True)
 	output, err = p.communicate()

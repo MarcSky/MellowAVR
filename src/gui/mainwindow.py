@@ -1,4 +1,3 @@
-#from PyQt4.Qt import *
 from PyQt4 import QtGui, QtCore
 from mainwind import Ui_MainWindow
 import sys
@@ -6,7 +5,6 @@ import os
 import os.path
 sys.path.insert(0, '../library')
 import compiler
-import parser_config
 from stylehighliter import *
 from np_dialog import *
 from parser_config import *
@@ -20,7 +18,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 		self.flag_tab = 0
 		self.resize(1024, 650)
 		self.parser = parser_config()
-		#self.parser.set_path('/home/juster/test')
+		#self.parser.set_path('/home/juster/Dropbox/test1')
 		#print self.parser.get_param('project_name')
 		self.model = QtGui.QFileSystemModel(self)
 		self.treeView.doubleClicked.connect(self.on_treeView_clicked)
@@ -36,10 +34,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 		self.actionGCC_version.activated.connect(self.gcc_version_func)
 		self.actionClean.activated.connect(self.build_clean_func)
 		self.actionDisassembler.activated.connect(self.build_disasm_func)
+		self.actionAvrdude_version.activated.connect(self.gcc_avrdude_func)
+		self.actionInfo.activated.connect(self.info_func)
 		self.tabWidget.setTabsClosable(True)
 		self.connect(self.tabWidget, QtCore.SIGNAL('tabCloseRequested(int)'), self.removeTab)
 		self.rootpath = QtCore.QDir.rootPath() + "home/juster/" # /Linux
 		self.window = None
+		self.text_list = []
 
 	def removeTab(self,index):
 		self.tabWidget.removeTab(index)
@@ -48,9 +49,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 			self.path_list.pop(index)
 		if(self.tabWidget.count() == 0):
 			self.flag_tab = 0
-		print "Delete index " + str(index)
-		print list(self.path_list)
-		print "Now flag " + str(self.flag_tab) 
+#		print "Delete index " + str(index)
+#		print list(self.path_list)
+#		print "Now flag " + str(self.flag_tab) 
 		
 	def file_new_project_func(self):
 		self.window = np_Dialog(self)
@@ -60,17 +61,17 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 			    self.open_file(mainpath)
 				
 	def file_new_func(self):
-		print "Index after: " + str(self.tabWidget.currentIndex())
+#		print "Index after: " + str(self.tabWidget.currentIndex())
 		self.tabWidget.addTab(QtGui.QTextEdit(''), 'Empty')
-		print "Count tab: " + str(self.tabWidget.count())
+#		print "Count tab: " + str(self.tabWidget.count())
 		if(self.flag_tab == 0):
 			indexfortab = 0
 			self.flag_tab = 1
 		else:
 			indexfortab = self.tabWidget.count() - self.tabWidget.currentIndex() - 1
 		
-		print "Index: " + str(indexfortab)	
-		print "Index before: " + str(self.tabWidget.currentIndex())
+#		print "Index: " + str(indexfortab)	
+#		print "Index before: " + str(self.tabWidget.currentIndex())
 		self.editor = self.tabWidget.widget(indexfortab)
 		self.editor.setTabStopWidth(15) #tab
 		self.highlighter = Highlighter(self.editor.document())
@@ -105,7 +106,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 			
 			absolutePath = fileInfo.path()
 			path_config = self.find_config(self.filepath)
-
+#			print path_config
 			self.indexfortab = self.tabWidget.count() - self.tabWidget.currentIndex()				
 			self.tabWidget.addTab(QtGui.QTextEdit(''), fileName)
 			
@@ -121,7 +122,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 			with f:        
 				data = f.read()
 				self.editor.setText(data)
-				f.close() #new					
+				f.close()
 						
 			if path_config and path_config == absolutePath:
 				self.model.setRootPath(absolutePath)
@@ -191,20 +192,24 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 			pass			        
 		
 	def closeEvent(self, event):
-		ask = QtGui.QMessageBox.question(self, 'Exit', 'Are you sure to quit?', QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-		if ask == QtGui.QMessageBox.Yes:
-			event.accept()
-		else:
-			event.ignore()
+		event.accept()
+		#ask = QtGui.QMessageBox.question(self, 'Exit', 'Are you sure to quit?', QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+		#if ask == QtGui.QMessageBox.Yes:
+		#	event.accept()
+		#else:
+		#	event.ignore()
+
+	def info_func(self):
+		QtGui.QMessageBox.question(self, 'About', 'This is MellowAVR IDE for programming\n This is GNU GPLv2 license\n This is make for fun!')
 			
 	def build_compile_func(self):
 		if (len(self.path_list) == 0):
 			self.listWidget.addItem("Project not opened")
 			return
-
 		path = self.path_list[self.tabWidget.currentIndex()]
 		infopath = QFileInfo(path)
 		filePath = str(infopath.path()) + '/'
+		self.file_save_func()
 		output, check = compiler.build_project(filePath)
 		outputdecode = unicode(output, 'UTF-8')
 		self.textEdit.setText(outputdecode)
@@ -257,7 +262,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 		if not check:
 			self.listWidget.addItem("succes clean")
 		else:
-			self.listWidget.addItem("file *.hex exist")
+			self.listWidget.addItem("file *.hex not exist")
 
 	def build_disasm_func(self):
 		if (len(self.path_list) == 0):
@@ -272,7 +277,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 			self.file_open_func(filePath + 'bin/main.asm')
 			self.listWidget.addItem("succes clean")
 		else:
-			self.listWidget.addItem("file *.hex exist")
+			self.listWidget.addItem("file *.hex not exist")
 
 	def gcc_version_func(self):
 		self.listWidget.addItem(compiler.build_version_gcc())
@@ -283,9 +288,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 		fileName = self.model.fileName(indexItem)
 		filePath = self.model.filePath(indexItem)
 		self.file_open_func(filePath)
+		
+	def gcc_avrdude_func(self):
+		self.listWidget.addItem(compiler.build_version_avrdude())
+		return 0
 
-	
-#app = QApplication(sys.argv)
-#main = MainWindow()
-#main.show()
-#sys.exit(app.exec_())
+app = QApplication(sys.argv)
+main = MainWindow()
+main.show()
+sys.exit(app.exec_())

@@ -5,11 +5,12 @@ from subprocess import Popen, PIPE
 from new_project import Ui_Dialog
 import sys
 import os
+sys.path.insert(0, '../library')
+from pars_makefile import *
 
 class np_Dialog(QtGui.QDialog, Ui_Dialog):
     def __init__(self, parent = None):
         QtGui.QDialog.__init__(self, parent)
-        #self.ui = Ui_Dialog()
         self.setupUi(self)
         self.nameProject = ""
         self.pathProject = ""
@@ -18,6 +19,10 @@ class np_Dialog(QtGui.QDialog, Ui_Dialog):
         self.connect(self.find, SIGNAL("clicked()"), self.findPathHandler)
         self.connect(self.ok, SIGNAL("clicked()"), self.okHandler)
         self.connect(self.cancel, SIGNAL("clicked()"), self.exitHandler)
+        self.main_mcu = ['atmega8', 'atmega16', 'atmega32', 'atmega64', 'atmega128']
+        self.freq_mcu = ['8000000','16000000']
+        self.freq_box.addItems(self.freq_mcu)
+        self.mcu_box.addItems(self.main_mcu)
 
     def okHandler(self):
 		if self.nameEdit.text() and self.pathEdit.text():
@@ -29,18 +34,15 @@ class np_Dialog(QtGui.QDialog, Ui_Dialog):
 			directory.mkdir("src")
 			directory.mkdir("header")
 			self.mainpath = self.fullpath + '/main.c'
-			main = open(self.mainpath, "a+")
-			main.close()
-			#comm_string = "cd .. && cd files && cp makefile "  + self.fullpath + '/'
-			#print comm_string
-			#comm_string = "uname -a"
-			#Popen(comm_string, executable='/bin/bash', shell=True).communicate()
 			makefile = open("../files/make_file", "r")
-			data = makefile.read()
+			text = makefile.readlines()
 			makefile.close()
-			print data
+			data = {}
+			data['MCU'] = self.mcu_box.currentText()
+			data['F_CPU'] = self.freq_box.currentText() + "UL"
+			texts = change_makefile(text, data)
 			makefile = open(self.fullpath + '/makefile', "w+")
-			makefile.write(data)
+			makefile.write(str(texts))
 			makefile.close()
 			config = open(self.fullpath + '/mellow.mcf', "w+")
 			config.write(self.create_config())
@@ -58,8 +60,7 @@ class np_Dialog(QtGui.QDialog, Ui_Dialog):
 		return self.fullpath, self.mainpath
 
     def create_config(self):
-		content = "[config]\n" + "project_name=" + self.nameProject + "\n" + "default_mcu=atmega8\n"
-		#s="[config]\nproject_name=%s\nhello\n" % (self.nameProject)
+		content = "[config]\n" + "project_name=" + self.nameProject + "\n" + "default_mcu=" + self.mcu_box.currentText() + "\n"
 		return content		
 
     def exitHandler(self):
