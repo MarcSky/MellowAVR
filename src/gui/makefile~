@@ -5,9 +5,9 @@ OBJCOPY = avr-objcopy
 SRCS = main.c
 OBJS = $(SRCS:.c=.o)
 MCU = atmega8
-F_CPU = 8000000
+F_CPU = 16000000
 
-CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Iheader -Os
+CFLAGS = -mmcu=$(MCU) -Wall -g -Os -Werror -lm  -mcall-prologues -DF_CPU=  -fshort-enums -Wstrict-prototypes -Os
 LDFLAGS = -mmcu=$(MCU)  -Wall -g -Os  -Werror
 
 all: dir $(TARG) 

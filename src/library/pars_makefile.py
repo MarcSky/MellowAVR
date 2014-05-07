@@ -10,8 +10,6 @@ def parser_makefile(text):
 					if line[x] == '=':
 						if line[x+1] == ' ':
 							info[word] = line[x+2:len(line)]
-						else:
-							info[word] = line[x+1:len(line)]
 	return info
 
 def change_makefile(text, data):
@@ -23,14 +21,12 @@ def change_makefile(text, data):
 					if line[x] == '=':
 						if line[x+1] == ' ':
 							text[count] = line[0:x+2] + data[word] + '\n'
-						else:
-							text[count] = line[0:x+1] + ' ' + data[word] + '\n'
+							
 		count = count + 1
 
 	strs = ""
 	for x in range(len(text)):
 		strs += text[x]
-
 	return strs
 	
 

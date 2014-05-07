@@ -19,9 +19,10 @@ class settings_form(QtGui.QDialog, Ui_Dialog):
         self.mcu_box.addItems(self.main_mcu)
         self.optimizBox.addItems(self.optimization)
         self.our_flags = {}
-        self.cflags = ""
+        self.cflags = "-mmcu=$(MCU) -DF_CPU=$(F_CPU) -Iheader"
         self.now_mcu = ""
         self.now_freq = ""
+        self.all_flags = ['-Wall','-Werror','-gdwarf-2','-funsigned-char','-std=gnu99','-Wundef','-fpack-struct','-fshort-enums','-Wstrict-prototypes','-funsigned-bitfields']
         self.connect(self.WallBox, QtCore.SIGNAL('stateChanged(int)'), self.wallbox_func)
         self.connect(self.WerrorBox, QtCore.SIGNAL('stateChanged(int)'), self.werrorbox_func)
         self.connect(self.gdwarfBox, QtCore.SIGNAL('stateChanged(int)'), self.gdwarf_func)
@@ -34,6 +35,7 @@ class settings_form(QtGui.QDialog, Ui_Dialog):
         self.connect(self.funsignBox, QtCore.SIGNAL('stateChanged(int)'), self.funsign_func)
         self.connect(self.saveButton, QtCore.SIGNAL("clicked()"), self.saveHandler)
         self.connect(self.cancelButton, QtCore.SIGNAL("clicked()"), self.cancelHandler)
+        self.getCflags()
 
     def saveHandler(self):
         self.parse_flags()
@@ -42,19 +44,48 @@ class settings_form(QtGui.QDialog, Ui_Dialog):
         makefile.close()        
         data = {}
         data['CFLAGS'] = self.cflags
+        data['MCU'] = self.now_mcu
+        data['F_CPU'] = self.now_freq
         texts = change_makefile(text, data)
         makefile = open('makefile', "w+")
         makefile.write(str(texts))
         makefile.close()
-        print "ok"
         return 0
 
+    def getCflags(self):
+        makefile = open("../files/make_file", "r")
+        text = makefile.readlines()
+        makefile.close()
+        t = parser_makefile(text)
+        slova = list(t['CFLAGS'].split())
+        for x in slova:
+            if x == '-Wall':
+                self.WallBox.setCheckState(Qt.Checked)
+            elif x == '-Werror':
+                self.WerrorBox.setCheckState(Qt.Checked)
+            elif x == '-gdwarf-2':
+                self.gdwarfBox.setCheckState(Qt.Checked)
+            elif x == '-funsigned-char':
+                self.funsignedBox.setCheckState(Qt.Checked)
+            elif x == '-std=gnu99':
+                self.gnu99Box.setCheckState(Qt.Checked)
+            elif x == '-Wundef':
+                self.wundefBox.setCheckState(Qt.Checked)
+            elif x == '-fpack-struct':
+                self.fpack-struct.setCheckState(Qt.Checked)
+            elif x == '-fshort-enums':
+                self.fshort-enums.setCheckState(Qt.Checked)
+            elif x == '-Wstrict-prototypes':
+                self.Wstrict-prototypes.setCheckState(Qt.Checked)
+            elif x == '-funsigned-bitfields':
+                self.funsignBox.setCheckState(Qt.Checked)
+
     def cancelHandler(self):
-        return 0
+        self.close()
 
     def wallbox_func(self):
     	self.our_flags['-Wall'] = 1 if self.WallBox.isChecked() else 0
-    
+
     def werrorbox_func(self):
     	self.our_flags['-Werror'] = 1 if self.WerrorBox.isChecked() else 0
     
